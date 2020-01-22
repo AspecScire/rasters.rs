@@ -1,3 +1,7 @@
+pub mod chunks;
+pub mod geometry;
+pub mod volume;
+
 use std::path::PathBuf;
 pub type InputArgs = PathBuf;
 pub struct OutputArgs {
@@ -34,5 +38,43 @@ pub fn create_output_raster(
     Ok(out_ds)
 }
 
-pub mod chunks;
-pub mod geometry;
+mod tests {
+    #[test]
+    #[ignore]
+    fn rayon_cancellation() {
+        use std::time::*;
+        use rayon::prelude::*;
+
+        fn task(idx: usize, magic: usize) -> Result<usize, Instant> {
+            let duration = Duration::from_millis(100);
+            if idx == magic {
+                eprintln!("Cancelling.");
+                return Err(Instant::now());
+            }
+            std::thread::sleep(duration);
+            // eprintln!("Completed task {}", idx);
+            Ok(idx)
+        }
+
+        let num_tasks: usize = 800;
+        let magic = std::env::var("MAGIC")
+            .map(|s| s.parse().expect("can't parse magic"))
+            .unwrap_or(2);
+
+        let start = Instant::now();
+        let err: Result<usize, Instant> = (0..num_tasks)
+            .into_par_iter()
+            .map(|i| task(i, magic))
+            .try_reduce(|| 0, |a, b| Ok(a+b));
+
+        let elapsed = start.elapsed().as_secs_f64();
+        eprintln!("Finished in {:.2}s", elapsed);
+        match err {
+            Ok(ans) => eprintln!("Completed. Value is {}", ans),
+            Err(start) => {
+                let elapsed = start.elapsed().as_secs_f64();
+                eprintln!("Cancellation took {:.2}s", elapsed);
+            }
+        }
+    }
+}

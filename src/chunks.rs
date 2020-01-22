@@ -240,9 +240,9 @@ impl ChunkReader for DatasetReader {
     }
 }
 
-use std::path::PathBuf;
-pub struct RasterPathReader(pub PathBuf, pub isize);
-impl ChunkReader for RasterPathReader {
+use std::path::Path;
+pub struct RasterPathReader<'a>(pub &'a Path, pub isize);
+impl<'a> ChunkReader for RasterPathReader<'a> {
     fn read_into_slice<T: Copy + GdalType>(
         &self, out: &mut [T],
         off: (isize, isize),

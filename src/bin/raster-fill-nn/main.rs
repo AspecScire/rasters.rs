@@ -16,14 +16,12 @@ fn run() -> Result<()> {
     // Read src pts and triangulate
     let triangles = triangulation::get_triangles(&args)?;
 
-    // Read raster
+    // Read input raster
     let ds = read_dataset(&args.input)?;
     let transform = geometry::transform_from_gdal(&ds.geo_transform()?);
     let band = ds.rasterband(1)?;
-    let no_val = {
-        use std::f64::NAN;
-        band.no_data_value().unwrap_or(NAN)
-    };
+    let no_val = band.no_data_value()
+        .unwrap_or(std::f64::NAN);
     let (width, height) = ds.size();
 
     // Create output dataset
@@ -50,73 +48,89 @@ fn run() -> Result<()> {
 
     // Create channel for writer to receive chunks
     let (s, r) = std::sync::mpsc::channel();
-    let writer = std::thread::spawn(
-        move || writer(r, out_ds, progress.clone()));
+    let writer = {
+        let progress = progress.clone();
+        std::thread::spawn(
+            || writer(r, out_ds, progress))
+    };
 
     // Process chunks in parallel
     use rayon::prelude::*;
     let chunks: Vec<_> = chunks
-        .map(|(y, size, _)| (y, size, s.clone()))
+        .map(|(y, size, _)| (y, size))
         .collect();
-    std::mem::drop(s);
 
-    use chunks::ChunkReader;
+    use failure::*;
+
     // For safe reading in different threads
-    let reader = chunks::RasterPathReader(args.input.clone(), 1);
-    let total_filled: usize = chunks
+    let total_filled = chunks
         .into_par_iter()
-        .map(move |(y, size, s)| {
-            // Load chunk
-            let data = reader.read_as_array((0, y), (width, size))
-                .unwrap_or_else(|e|
-                    panic!(format!("chunk @ y={}: {}", y, e)));
-            (y, data, s)
-        })
-        .map(move |(y, data, s)| {
+        .map_init(
+            || {
+                use chunks::DatasetReader;
+                let ds = read_dataset(&args.input)
+                    .expect("reader initialization failed");
+                DatasetReader(ds, 1)
+            },
+            |reader, (y, size)| {
+                use chunks::ChunkReader;
+                let data = reader
+                    .read_as_array((0, y), (width, size))
+                    .with_context(
+                        |e| format_err!("chunk @ y={}: {}", y, e)
+                    )?;
+                Ok::<_, Error>((y, data))
+            },
+        )
+        .map_with(s, |s, data| {
+            let (y, data) = data?;
             // Process chunk
             let mut chunk = (y, data);
             let count = interpolation::fill_chunk(&mut chunk, no_val,
                                    transform, &triangles,
                                    args.sibson);
 
-            s.send(chunk).expect("channel send failed");
-            count
+            s.send(chunk)?;
+            Ok::<_, Error>(count)
         })
-        .sum();
+        .try_reduce(|| 0, |a, b| Ok(a+b));
 
     // Join spawned threads
     writer.join()
-        .expect("writer thread panicked");
+        .expect("writer thread panicked")
+        .map_err(|e| {
+            progress.finish();
+            e
+        })?;
     prog_bar.join()
         .expect("progress bar panicked");
 
-    eprintln!("Filled {} values", total_filled);
+    eprintln!("Filled {} values", total_filled?);
     Ok(())
 }
 
 use chunks::Chunk;
 use std::sync::{mpsc::Receiver, Arc};
-fn writer(receiver: Receiver<Chunk<f64>>,
-          out_ds: Dataset,
-          progress: Arc<Progress<DetailCounter>>) {
-    let out_band = out_ds.rasterband(1)
-        .expect("could not open output band");
+fn writer(
+    receiver: Receiver<Chunk<f64>>,
+    out_ds: Dataset,
+    progress: Arc<Progress<DetailCounter>>
+) -> Result<()> {
+    let out_band = out_ds.rasterband(1)?;
     for (y, data) in receiver {
         use gdal::raster::Buffer;
         let (ysize, xsize) = data.dim();
         out_band.write((0, y),
                        (xsize, ysize),
                        &Buffer::new((xsize, ysize),
-                                    data.into_raw_vec()))
-            .expect(&format!("write @y={} failed", y));
+                                    data.into_raw_vec()))?;
         progress.value.processed.fetch_add(1);
     }
     progress.finish();
+    Ok(())
 }
 
 /// Program arguments
-use rasters::{InputArgs, OutputArgs};
-
 pub struct Args {
     /// Points source filename
     pub source: InputArgs,
