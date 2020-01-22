@@ -1,8 +1,12 @@
 [package]
 name = "rasters"
 version = "0.1.0"
-authors = ["Rajsekar Manokaran <rajsekar@gmail.com>"]
+authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>"]
 edition = "2018"
+publish = ["aspecscire"]
+repository = "https://github.com/AspecScire/rasters.rs"
+description = "Raster processing bins and lib"
+license = "private"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
