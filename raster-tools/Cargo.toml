@@ -1,0 +1,41 @@
+[package]
+name = "raster-tools"
+version = "0.6.0"
+authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>", "Madhav Manoj <madhav.manoj@aspecscire.com>"]
+edition = "2018"
+repository = "https://github.com/AspecScire/rasters.rs"
+description = "Raster processing tools"
+license = "Apache-2.0/MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rasters = { path = "..", version = "0.6.0", features = ["use-rayon"] }
+clap = "2.33.0"
+indicatif = "0.13.0"
+Inflector = "0.11.4"
+
+rayon = "1.3.0"
+spade = "1.8.2"
+
+memmap = "0.7.0"
+
+nalgebra = "0.18"
+ndarray = { version = "0.13.0", features = ["serde-1"] }
+
+# GIS deps
+gdal = "0.7.2"
+geo = "0.16.0"
+
+# Serialization
+serde = "1.0.104"
+serde_derive = "1.0.104"
+serde_cbor = "0.11.1"
+serde_json = "1.0.45"
+
+# Error handling
+anyhow = "1.0.37"
+
+[dev-dependencies]
+tempdir = "0.3.7"
+rand = "0.4"
