@@ -1,3 +1,5 @@
+[![Documentation](https://docs.rs/rasters/badge.svg)](https://docs.rs/rasters)
+
 # raster.rs
 
 Library to process GDAL rasters. Provides utilities to

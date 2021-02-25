@@ -1,10 +1,15 @@
 [package]
 name = "rasters"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>", "Madhav Manoj <madhav.manoj@aspecscire.com>"]
 edition = "2018"
-repository = "https://github.com/AspecScire/rasters.rs"
 description = "Raster processing library"
+
+homepage = "https://github.com/AspecScire/rasters.rs"
+repository = "https://github.com/AspecScire/rasters.rs"
+readme = "README.md"
+
+documentation = "https://docs.rs/rasters"
 license = "Apache-2.0/MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -40,3 +45,5 @@ members = [
 
 [package.metadata.docs.rs]
 all-features = true
+# needed to get docs.rs to build gdal
+rustc-args = ["--cfg", "docsrs"]
