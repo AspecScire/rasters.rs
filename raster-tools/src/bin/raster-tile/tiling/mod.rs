@@ -1,3 +1,4 @@
+use anyhow::bail;
 use base::RowProc;
 use gdal::Dataset;
 use nalgebra::{Matrix3, Point2};
@@ -23,25 +24,39 @@ impl Config {
             let dim = ds.raster_size();
             let (right, bot) = pix_to_wm(dim.0 as f64, dim.1 as f64)?;
 
+            let rt = pix_to_wm(dim.0 as f64, 0.)?;
+            let lb = pix_to_wm(0., dim.1 as f64)?;
+
+            if (rt.0 - right).abs() / right > 1e-5
+                || (rt.1 - top).abs() / top > 1e-5
+                || (lb.0 - left).abs() / left > 1e-5
+                || (lb.1 - bot).abs() / bot > 1e-5 {
+                    bail!("transform is not north aligned");
+                }
+
             Ok([left, top, right, bot])
         }
 
         let [left, top, right, bot] = wm_bounds_for_raster(&ds)?;
         let dim = ds.raster_size();
-        let x_ratio = (right - left) / dim.0 as f64;
-        let y_ratio = (bot - top) / dim.1 as f64;
+        let x_res = (right - left) / dim.0 as f64;
+        let y_res = (bot - top) / dim.1 as f64;
 
         let wm_to_pix = Matrix3::new(
-            1. / x_ratio,
+            1. / x_res,
             0.,
-            -left / x_ratio,
+            -left / x_res,
             0.,
-            1. / y_ratio,
-            -top / y_ratio,
+            1. / y_res,
+            -top / y_res,
             0.,
             0.,
             1.,
         );
+
+        if (x_res.abs() - y_res.abs()).abs() / x_res.abs().min(y_res.abs()) > 1e-2 {
+            bail!("pixels are not square");
+        }
 
         let wm_bounds = Bounds::new((left, top), (right, bot));
         Ok(Config {
@@ -66,8 +81,8 @@ impl Config {
         )
     }
 
-    pub fn max_zoom(&self, pix_size: f64) -> usize {
-        web_mercator::zoom_for_resolution(pix_size, self.tile_size).ceil() as usize
+    pub fn max_zoom(&self) -> usize {
+        web_mercator::zoom_for_resolution(1. / self.wm_to_pix[(0, 0)].abs(), self.tile_size).ceil() as usize
     }
 
     pub fn min_zoom(&self) -> usize {
