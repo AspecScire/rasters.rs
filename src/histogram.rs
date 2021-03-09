@@ -74,6 +74,7 @@ impl Config {
 
 /// Represent the location of a value with respect to a
 /// histogram configuration.
+#[derive(Debug)]
 pub enum HistBin {
     Min,
     Max,
@@ -82,7 +83,7 @@ pub enum HistBin {
 
 /// A histogram that can be built by accumulating individual
 /// values, or other histograms.
-#[derive(Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Histogram<'a> {
     cfg: &'a Config,
     hist: Vec<usize>,

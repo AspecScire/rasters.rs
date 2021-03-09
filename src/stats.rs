@@ -10,7 +10,7 @@ use std::ops::AddAssign;
 /// - a `f64` value.  Adds a new sample
 /// - a `(f64, f64)` tuple.  Adds the first component with weight specified by the second component.
 /// - another `PixelStats` value.  Accumulates the statistic from the other into `self`.
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct PixelStats {
     max: f64,
     min: f64,
