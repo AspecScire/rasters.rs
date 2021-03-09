@@ -67,7 +67,7 @@ impl Config {
     }
 
     pub fn max_zoom(&self, pix_size: f64) -> usize {
-        web_mercator::largest_zoom_greater_than(pix_size, self.tile_size)
+        web_mercator::zoom_for_resolution(pix_size, self.tile_size).ceil() as usize
     }
 
     pub fn min_zoom(&self) -> usize {
