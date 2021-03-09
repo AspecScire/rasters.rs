@@ -111,7 +111,9 @@ impl Diff {
                     let val_2 = arr_2[(i_2 as usize, j_2 as usize)];
 
                     // Ignore if value is no-data or NAN
-                    if val_2.is_nan() || val_2 == self.no_val_2 { return; }
+                    if val_2.is_nan() || val_2 == self.no_val_2 {
+                        return;
+                    }
                     f((i, j), val_1, val_2);
                 });
             }

@@ -3,7 +3,7 @@ use rayon::prelude::*;
 use clap::*;
 
 use anyhow::{anyhow, bail};
-use raster_tools::{utils::*, *, Result, Tracker};
+use raster_tools::{utils::*, Result, Tracker, *};
 use rasters::prelude::*;
 
 // Main function
@@ -49,10 +49,12 @@ fn run() -> Result<()> {
 
     let stats = chunks
         .map_init(
-            || DatasetReader(
-                read_dataset(&args.input).expect("reader initialization failed"),
-                1,
-            ),
+            || {
+                DatasetReader(
+                    read_dataset(&args.input).expect("reader initialization failed"),
+                    1,
+                )
+            },
             |rd, chunk| (rd.read_chunk::<f64>(chunk), chunk.1),
         )
         .try_fold(init, |mut stats, (data, y)| {
@@ -106,10 +108,10 @@ pub struct Args {
 fn read_polygons(path: &Path) -> Result<Vec<Option<geo::MultiPolygon<f64>>>> {
     let mut ds = read_dataset(path)?;
     let layer = ds.layer(0)?;
-    layer.features()
+    layer
+        .features()
         .map(|feature| -> Result<_> {
-            Some(multipoly_from_wkt(&feature.geometry().wkt()?))
-                .transpose()
+            Some(multipoly_from_wkt(&feature.geometry().wkt()?)).transpose()
         })
         .collect()
 }

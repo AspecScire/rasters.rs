@@ -97,10 +97,8 @@ fn run() -> Result<()> {
                         match s {
                             ValueSender(_) => {
                                 (Some(Array2::from_elem(data_1.dim(), f64::NAN)), None)
-                            },
-                            DiscSender(_) => {
-                                (None, Some(Array2::from_elem(data_1.dim(), -128)))
-                            },
+                            }
+                            DiscSender(_) => (None, Some(Array2::from_elem(data_1.dim(), -128))),
                         }
                     } else {
                         (None, None)
@@ -175,8 +173,8 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-use gdal::Dataset;
 use gdal::raster::GdalType;
+use gdal::Dataset;
 fn writer<T: GdalType + Copy>(receiver: Receiver<Chunk<T>>, ds: Dataset) -> Result<()> {
     let band = ds.rasterband(1)?;
     for (y, data) in receiver {
