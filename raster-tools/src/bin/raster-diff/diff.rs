@@ -82,7 +82,10 @@ impl Diff {
         });
 
         let (rows, cols) = arr_1.dim();
-        let idx_t = index_transformer(chunk_t, arr_2.dim());
+        let idx_t = {
+            let (r, c) = arr_2.dim();
+            index_transformer(chunk_t, (c, r))
+        };
 
         for i in 0..rows {
             for j in 0..cols {

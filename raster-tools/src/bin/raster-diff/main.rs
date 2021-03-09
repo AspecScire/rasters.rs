@@ -29,12 +29,7 @@ fn run() -> Result<()> {
     let no_val_2 = ds_2.rasterband(1)?.no_data_value().unwrap_or(f64::NAN);
 
     // Compute transform: raster 1 -> 2 (in pixels)
-    let transform = {
-        let inv = transform_2
-            .try_inverse()
-            .ok_or_else(|| anyhow!("input_b: couldn't invert transform"))?;
-        inv * transform_1
-    };
+    let transform = transform_between(&ds, &ds_2)?;
 
     // Compute extent on raster 1 pixels
     let extent = {
