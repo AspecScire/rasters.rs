@@ -109,3 +109,29 @@ impl BoundsExt for Bounds {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use nalgebra::Point2;
+
+    use super::*;
+    use std::path::Path;
+
+    #[test]
+    #[ignore]
+    fn test_with_input() {
+        use std::env::var;
+        let path = var("RASTER").expect("env: RASTER not found");
+        let t = transform_from_dataset(&Dataset::open(Path::new(&path)).unwrap());
+        for i in 0..3 {
+            eprint!("[");
+            for j in 0..3 {
+                eprint!("{:15.3}", t[(i, j)]);
+            }
+            eprintln!("]")
+        }
+
+        let pt = t.transform_point(&Point2::new(0.0, 0.0));
+        eprintln!("(0, 0) -> ({:15.3},{:15.3})", pt.x, pt.y);
+    }
+}

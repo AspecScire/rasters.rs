@@ -16,7 +16,6 @@ pub fn mask_chunk(input_chunk: &MultiBandChunk<f64>, no_val: f64) -> Chunk<u8> {
             let b_band = &input_chunk.1[2];
 
             !(r_band[(y, x)] == no_val && g_band[(y, x)] == no_val && b_band[(y, x)] == no_val)
-
         } else {
             let val = input_chunk.1[band_count - 1][(y, x)];
 
@@ -26,11 +25,7 @@ pub fn mask_chunk(input_chunk: &MultiBandChunk<f64>, no_val: f64) -> Chunk<u8> {
 
     for y in 0..ht {
         for x in 0..wid {
-            mask[(y, x)] = if is_data(x, y) {
-                255
-            } else {
-                0
-            };
+            mask[(y, x)] = if is_data(x, y) { 255 } else { 0 };
         }
     }
     (input_chunk.0, mask)

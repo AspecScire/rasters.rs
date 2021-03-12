@@ -2,14 +2,14 @@ use rasters::stats::PixelStats;
 use serde_derive::Serialize;
 use std::ops::AddAssign;
 
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct RasterDiffOutput {
     pub pix_area_1: f64,
     pub pix_area_2: f64,
     pub stats: RasterDiffStats,
 }
 
-#[derive(Serialize, Clone, Default)]
+#[derive(Serialize, Clone, Default, Debug)]
 pub struct RasterDiffStats {
     count: usize,
     first: PixelStats,

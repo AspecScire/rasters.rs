@@ -29,12 +29,7 @@ fn run() -> Result<()> {
     let no_val_2 = ds_2.rasterband(1)?.no_data_value().unwrap_or(f64::NAN);
 
     // Compute transform: raster 1 -> 2 (in pixels)
-    let transform = {
-        let inv = transform_2
-            .try_inverse()
-            .ok_or_else(|| anyhow!("input_b: couldn't invert transform"))?;
-        inv * transform_1
-    };
+    let transform = transform_between(&ds, &ds_2)?;
 
     // Compute extent on raster 1 pixels
     let extent = {
@@ -102,10 +97,8 @@ fn run() -> Result<()> {
                         match s {
                             ValueSender(_) => {
                                 (Some(Array2::from_elem(data_1.dim(), f64::NAN)), None)
-                            },
-                            DiscSender(_) => {
-                                (None, Some(Array2::from_elem(data_1.dim(), -128)))
-                            },
+                            }
+                            DiscSender(_) => (None, Some(Array2::from_elem(data_1.dim(), -128))),
                         }
                     } else {
                         (None, None)
@@ -180,8 +173,8 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-use gdal::Dataset;
 use gdal::raster::GdalType;
+use gdal::Dataset;
 fn writer<T: GdalType + Copy>(receiver: Receiver<Chunk<T>>, ds: Dataset) -> Result<()> {
     let band = ds.rasterband(1)?;
     for (y, data) in receiver {

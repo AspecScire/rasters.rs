@@ -82,7 +82,10 @@ impl Diff {
         });
 
         let (rows, cols) = arr_1.dim();
-        let idx_t = index_transformer(chunk_t, arr_2.dim());
+        let idx_t = {
+            let (r, c) = arr_2.dim();
+            index_transformer(chunk_t, (c, r))
+        };
 
         for i in 0..rows {
             for j in 0..cols {
@@ -108,9 +111,10 @@ impl Diff {
                     let val_2 = arr_2[(i_2 as usize, j_2 as usize)];
 
                     // Ignore if value is no-data or NAN
-                    if !val_2.is_nan() && val_2 != self.no_val_2 {
-                        f((i, j), val_1, val_2);
+                    if val_2.is_nan() || val_2 == self.no_val_2 {
+                        return;
                     }
+                    f((i, j), val_1, val_2);
                 });
             }
         }

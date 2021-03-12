@@ -68,11 +68,15 @@ pub fn tile_index_transform(zoom: usize) -> Matrix3<f64> {
     )
 }
 
-/// Compute the largest zoom with pixel size greater than
-/// the reference pixel size.
-pub fn largest_zoom_greater_than(ref_size: f64, tile_res: usize) -> usize {
+/// Compute the fractional zoom at which the width of a
+/// pixel of a tile is the specified resolution.
+///
+/// # Arguments
+/// - `pixel_dist` - width of the pixel in web. mercator coords
+/// - `tile_res` - resolution of each tile
+pub fn zoom_for_resolution(pixel_dist: f64, tile_res: usize) -> f64 {
     let base_pixel_size = tile_size(0) / tile_res as f64;
-    (base_pixel_size / ref_size).log2().floor() as usize
+    (base_pixel_size / pixel_dist).log2()
 }
 
 /// Compute the largest zoom containing the complete bounds

@@ -1,5 +1,5 @@
 use clap::*;
-use raster_tools::{ utils::*, * };
+use raster_tools::{utils::*, *};
 
 use rasters::histogram::Config as HistConfig;
 use std::path::PathBuf;

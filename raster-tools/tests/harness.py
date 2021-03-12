@@ -49,6 +49,7 @@ def run_cargo(bin_name, *args, build=None):
     cargs = ['cargo', 'run', '--quiet', '--manifest-path', MANIFEST_PATH]
     if build: cargs.append( f'--{build}' )
     cargs += ['--bin', bin_name, '--']
+    cargs += ['-c', str(1)]
     cargs += args
     output = check_output(cargs)
     if output:

@@ -10,14 +10,12 @@ fn run() -> Result<()> {
 
     let ds = read_dataset(&args.input)?;
     let cfg = tiling::Config::for_raster(&ds, args.tile_size)?;
-    let pix_transform = transform_from_dataset(&ds);
 
     let min_zoom = args.min_zoom.unwrap_or_else(|| cfg.min_zoom());
     eprintln!("min zoom: {}", min_zoom);
 
     let max_zoom = args.max_zoom.unwrap_or_else(|| {
-        let pix_size = pix_transform[(1, 1)].abs();
-        cfg.max_zoom(pix_size)
+        cfg.max_zoom()
     });
     eprintln!("max zoom: {}", max_zoom);
 

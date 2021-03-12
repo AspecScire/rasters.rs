@@ -140,3 +140,44 @@ pub fn index_transformer(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::Path;
+
+    fn print_mat3x3(t: &PixelTransform) {
+        for i in 0..3 {
+            eprint!("[");
+            for j in 0..3 {
+                eprint!("{:15.5},", t[(i, j)]);
+            }
+            eprintln!("],")
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_with_input() {
+        use std::env::var;
+        let path1 = var("RASTER1").expect("env: RASTER1 not found");
+        let path2 = var("RASTER2").expect("env: RASTER2 not found");
+        let ds1 = Dataset::open(Path::new(&path1)).unwrap();
+        let ds2 = Dataset::open(Path::new(&path2)).unwrap();
+
+        let t1 = transform_from_dataset(&ds1);
+        let t2 = transform_from_dataset(&ds2);
+        eprintln!("ds1 transform: ");
+        print_mat3x3(&t1);
+        eprintln!("ds2 transform: ");
+        print_mat3x3(&t2);
+
+        let tbet = transform_between(&ds1, &ds2).unwrap();
+        eprintln!("transform between: ");
+        print_mat3x3(&tbet);
+
+        let tchunk = chunk_transform(&tbet, Vector2::new(0., 0.), Vector2::new(10., 0.));
+        eprintln!("transform chunk: ");
+        print_mat3x3(&tchunk);
+    }
+}
