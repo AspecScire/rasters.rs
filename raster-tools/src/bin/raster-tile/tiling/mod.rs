@@ -53,9 +53,8 @@ impl Config {
             0.,
             1.,
         );
-
-        if (x_res.abs() - y_res.abs()).abs() / x_res.abs().min(y_res.abs()) > 1e-2 {
-            bail!("pixels are not square");
+        if (x_res.abs() - y_res.abs()).abs() / x_res.abs().min(y_res.abs()) > 0.25 {
+            bail!("pixels are not square in web. merc. coords");
         }
 
         let wm_bounds = Bounds::new((left, top), (right, bot));
