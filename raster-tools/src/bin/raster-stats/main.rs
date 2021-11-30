@@ -81,7 +81,7 @@ fn run() -> Result<()> {
                 }
             }
             tracker.increment();
-            Ok::<_, Error>(stats)
+            Ok(stats)
         })
         .try_reduce(init, |mut acc_1, acc_2| {
             for (i, acc) in acc_1.iter_mut().enumerate() {
