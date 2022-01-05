@@ -24,21 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        toolchain:
-          - stable
-        container_image:
-          - osgeo/gdal:ubuntu-full-3.2.2
-          - osgeo/gdal:ubuntu-full-3.3.2
+        rust:
+          - 1.57
+        gdal:
+          - 3.2.2
     container:
-      image: ${{ matrix.container_image }}
+      image: rmanoka/georust-ci:gdal-${{ matrix.gdal }}-rust-${{ matrix.rust }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Gdal version
         run: gdalinfo --version
-      - name: Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          components: rustfmt, clippy
       - run: cargo test --all-features
