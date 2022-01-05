@@ -15,4 +15,5 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get \
     install -y --fix-missing --no-install-recommends \
-    build-essential
+    build-essential pkg-config \
+    && rm -rf /var/lib/apt/lists/*

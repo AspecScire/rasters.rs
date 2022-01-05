@@ -1,4 +1,4 @@
-import gdal
+from osgeo import gdal
 from math import isclose
 import numpy as N
 import json
