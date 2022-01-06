@@ -741,6 +741,7 @@ dependencies = [
  "anyhow",
  "clap",
  "gdal",
+ "gdal-sys",
  "geo",
  "indicatif",
  "memmap",

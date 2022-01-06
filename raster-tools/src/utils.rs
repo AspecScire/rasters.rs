@@ -42,12 +42,7 @@ pub fn create_output_raster<T: GdalType>(
         let driver = Driver::get(&arg.driver)?;
         let (width, height) = ds.raster_size();
         driver
-            .create_with_band_type::<T, _>(
-                &arg.path,
-                width as isize,
-                height as isize,
-                num_bands,
-            )
+            .create_with_band_type::<T, _>(&arg.path, width as isize, height as isize, num_bands)
             .with_context(|| format!("creating dataset {}", arg.path.display()))?
     };
     if let Some(no_val) = no_val {
@@ -79,12 +74,7 @@ mod test {
 
         // Create empty raster
         {
-            driver.create_with_band_type::<f64, _>(
-                &path,
-                WIDTH as isize,
-                HEIGHT as isize,
-                1,
-            )?;
+            driver.create_with_band_type::<f64, _>(&path, WIDTH as isize, HEIGHT as isize, 1)?;
         }
 
         // Create random data

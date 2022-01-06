@@ -30,9 +30,10 @@ impl Config {
             if (rt.0 - right).abs() / right > 1e-5
                 || (rt.1 - top).abs() / top > 1e-5
                 || (lb.0 - left).abs() / left > 1e-5
-                || (lb.1 - bot).abs() / bot > 1e-5 {
-                    bail!("transform is not north aligned");
-                }
+                || (lb.1 - bot).abs() / bot > 1e-5
+            {
+                bail!("transform is not north aligned");
+            }
 
             Ok([left, top, right, bot])
         }
@@ -81,7 +82,8 @@ impl Config {
     }
 
     pub fn max_zoom(&self) -> usize {
-        web_mercator::zoom_for_resolution(1. / self.wm_to_pix[(0, 0)].abs(), self.tile_size).ceil() as usize
+        web_mercator::zoom_for_resolution(1. / self.wm_to_pix[(0, 0)].abs(), self.tile_size).ceil()
+            as usize
     }
 
     pub fn min_zoom(&self) -> usize {

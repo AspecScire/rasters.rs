@@ -94,7 +94,10 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-use std::{path::{Path, PathBuf}, convert::TryInto};
+use std::{
+    convert::TryInto,
+    path::{Path, PathBuf},
+};
 /// Program arguments
 pub struct Args {
     /// First input

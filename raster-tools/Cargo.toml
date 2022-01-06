@@ -25,6 +25,7 @@ ndarray = { version = "0.13.1", features = ["serde-1"] }
 
 # GIS deps
 gdal = "0.11.0"
+gdal-sys = "*"
 geo = "0.18.0"
 
 # Serialization

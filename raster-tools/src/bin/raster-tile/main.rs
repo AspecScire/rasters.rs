@@ -14,9 +14,7 @@ fn run() -> Result<()> {
     let min_zoom = args.min_zoom.unwrap_or_else(|| cfg.min_zoom());
     eprintln!("min zoom: {}", min_zoom);
 
-    let max_zoom = args.max_zoom.unwrap_or_else(|| {
-        cfg.max_zoom()
-    });
+    let max_zoom = args.max_zoom.unwrap_or_else(|| cfg.max_zoom());
     eprintln!("max zoom: {}", max_zoom);
 
     let index = construct_base(max_zoom, min_zoom, &args, &cfg)?;
