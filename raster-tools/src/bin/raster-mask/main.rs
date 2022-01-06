@@ -77,11 +77,10 @@ fn run() -> Result<()> {
 }
 
 fn writer(receiver: Receiver<Chunk<u8>>, out_ds: Dataset, progress: Tracker) -> Result<()> {
-    let out_band = out_ds.rasterband(1)?;
     for (y, data) in receiver {
         use gdal::raster::Buffer;
         let (ysize, xsize) = data.dim();
-        out_band.write(
+        out_ds.rasterband(1)?.write(
             (0, y),
             (xsize, ysize),
             &Buffer::new((xsize, ysize), data.into_raw_vec()),

@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use anyhow::bail;
 use nalgebra::Point2;
 use raster_tools::{utils::*, *};
@@ -58,19 +60,28 @@ pub fn get_triangulation<I: IntoIterator<Item = PointWithHeight>>(pts: I) -> Tri
     return tr;
 }
 
-pub fn get_points(mut ds: gdal::Dataset, prop_name: &str) -> Result<Vec<PointWithHeight>> {
-    let layer = ds.layer(0)?;
+pub fn get_points(ds: gdal::Dataset, prop_name: &str) -> Result<Vec<PointWithHeight>> {
+    let mut layer = ds.layer(0)?;
     let mut out = vec![];
+    let mut ignore_count = 0;
 
     for f in layer.features() {
-        let geom = f.geometry().clone().into();
+        let geom = f.geometry().clone().try_into()?;
         use geo::Geometry::Point;
         if let Point(p) = geom {
             use gdal::vector::FieldValue::RealValue;
-            if let RealValue(z) = f.field(prop_name)? {
+            if let Some(RealValue(z)) = f.field(prop_name)? {
                 out.push(PointWithHeight::new(Point2::new(p.x(), p.y()), z));
+                continue;
             }
         }
+        ignore_count += 1;
+    }
+    if ignore_count > 0 {
+        eprintln!(
+            "WARNING: ignored {} geometries (not wkbPoint or no z prop)",
+            ignore_count
+        );
     }
 
     Ok(out)

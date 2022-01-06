@@ -94,7 +94,7 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-use std::path::{Path, PathBuf};
+use std::{path::{Path, PathBuf}, convert::TryInto};
 /// Program arguments
 pub struct Args {
     /// First input
@@ -106,8 +106,8 @@ pub struct Args {
 }
 
 fn read_polygons(path: &Path) -> Result<Vec<Option<geo::MultiPolygon<f64>>>> {
-    let mut ds = read_dataset(path)?;
-    let layer = ds.layer(0)?;
+    let ds = read_dataset(path)?;
+    let mut layer = ds.layer(0)?;
     layer
         .features()
         .map(|feature| -> Result<_> {
@@ -117,7 +117,7 @@ fn read_polygons(path: &Path) -> Result<Vec<Option<geo::MultiPolygon<f64>>>> {
 }
 
 fn multipoly_from_wkt(wkt: &str) -> Result<geo::MultiPolygon<f64>> {
-    let geom = gdal::vector::Geometry::from_wkt(wkt)?.into();
+    let geom = gdal::vector::Geometry::from_wkt(wkt)?.try_into()?;
     use geo::Geometry::{MultiPolygon, Polygon};
     Ok(match geom {
         Polygon(p) => p.into(),

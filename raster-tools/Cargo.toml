@@ -24,8 +24,8 @@ nalgebra = "0.18"
 ndarray = { version = "0.13.0", features = ["serde-1"] }
 
 # GIS deps
-gdal = "0.7.2"
-geo = "0.16.0"
+gdal = "0.11"
+geo = "0.18.0"
 
 # Serialization
 serde = "1.0.104"

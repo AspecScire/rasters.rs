@@ -2,7 +2,7 @@ use clap::*;
 use raster_tools::{utils::*, *};
 
 use rasters::histogram::Config as HistConfig;
-use std::path::PathBuf;
+use std::{path::PathBuf, convert::TryInto};
 /// Program arguments
 pub struct Args {
     /// First input
@@ -154,7 +154,8 @@ pub fn parse_cmd_line() -> Args {
     let polygon = value_t!(matches, "polygon", String).ok().map(|wkt| {
         let geom = gdal::vector::Geometry::from_wkt(&wkt)
             .unwrap_or_else(|_| Error::with_description("cannot parse WKT", InvalidValue).exit())
-            .into();
+            .try_into()
+            .unwrap_or_else(|_| Error::with_description("cannot parse as geometry", InvalidValue).exit());
         use geo::Geometry::{MultiPolygon, Polygon};
         match geom {
             Polygon(p) => p.into(),
