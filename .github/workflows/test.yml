@@ -28,6 +28,7 @@ jobs:
           - 1.57
         gdal:
           - 3.2.2
+          - 3.3.2
     name: Test on gdal ${{ matrix.gdal }}, rust ${{ matrix.rust }}
     container:
       image: rmanoka/georust-ci:gdal-${{ matrix.gdal }}-rust-${{ matrix.rust }}
