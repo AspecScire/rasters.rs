@@ -176,7 +176,7 @@ fn run() -> Result<()> {
 use gdal::raster::GdalType;
 use gdal::Dataset;
 fn writer<T: GdalType + Copy>(receiver: Receiver<Chunk<T>>, ds: Dataset) -> Result<()> {
-    let band = ds.rasterband(1)?;
+    let mut band = ds.rasterband(1)?;
     for (y, data) in receiver {
         use gdal::raster::Buffer;
         let (ysize, xsize) = data.dim();

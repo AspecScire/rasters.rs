@@ -1,4 +1,4 @@
-use anyhow::bail;
+use anyhow::{anyhow, bail};
 use nalgebra::Point2;
 use raster_tools::{utils::*, *};
 
@@ -10,9 +10,9 @@ pub struct PointWithHeight {
 }
 
 impl PointWithHeight {
-    pub fn new(point: Point2<f64>, height: f64) -> Self {
+    pub fn new(x: f64, y: f64, height: f64) -> Self {
         PointWithHeight {
-            point,
+            point: Point2::new(x, y),
             height,
             gradient: Point2::new(0., 0.),
         }
@@ -58,19 +58,39 @@ pub fn get_triangulation<I: IntoIterator<Item = PointWithHeight>>(pts: I) -> Tri
     return tr;
 }
 
-pub fn get_points(mut ds: gdal::Dataset, prop_name: &str) -> Result<Vec<PointWithHeight>> {
-    let layer = ds.layer(0)?;
+pub fn get_points(ds: gdal::Dataset, prop_name: &str) -> Result<Vec<PointWithHeight>> {
+    let mut layer = ds.layer(0)?;
     let mut out = vec![];
 
+    #[allow(non_upper_case_globals)]
     for f in layer.features() {
-        let geom = f.geometry().clone().into();
-        use geo::Geometry::Point;
-        if let Point(p) = geom {
-            use gdal::vector::FieldValue::RealValue;
-            if let RealValue(z) = f.field(prop_name)? {
-                out.push(PointWithHeight::new(Point2::new(p.x(), p.y()), z));
+        let geo = f.geometry();
+        let geometry_type = geo.geometry_type();
+
+        use gdal_sys::OGRwkbGeometryType::*;
+        let (x, y) = match geometry_type {
+            wkbPoint | wkbPoint25D | wkbPointM | wkbPointZM => {
+                let (x, y, _) = geo.get_point(0);
+                (x, y)
             }
-        }
+            _ => bail!("unknown geometry type: {}", geometry_type),
+        };
+
+        use gdal::vector::FieldValue::RealValue;
+        let prop_value = f
+            .field(prop_name)?
+            .ok_or_else(|| anyhow!("field {} was null", prop_name))?;
+
+        let z = match prop_value {
+            RealValue(z) => z,
+            _ => bail!(
+                "unexpected type ({}) of field {}",
+                prop_value.ogr_field_type(),
+                prop_name
+            ),
+        };
+
+        out.push(PointWithHeight::new(x, y, z));
     }
 
     Ok(out)

@@ -70,7 +70,7 @@ impl<'a> ChunkReader for RasterBand<'a> {
         T: GdalType + Copy,
     {
         Ok(self
-            .read_into_slice(off, size, size, out)
+            .read_into_slice(off, size, size, out, None)
             .with_context(|| {
                 format_err!(
                     "reading window @ ({},{}) of dimension ({}x{})",

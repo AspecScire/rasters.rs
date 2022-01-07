@@ -1,5 +1,7 @@
 //! Utilities to create, read and write raster datasets.
 
+use gdal::DatasetOptions;
+use gdal::GdalOpenFlags;
 use rasters::Result;
 use std::fs::File;
 use std::path::Path;
@@ -19,8 +21,14 @@ pub fn read_dataset(path: &Path) -> Result<Dataset> {
 }
 
 pub fn edit_dataset(path: &Path) -> Result<Dataset> {
-    Ok(Dataset::open_ex(&path, Some(1), None, None, None)
-        .with_context(|| format!("editing dataset {}", path.display()))?)
+    Ok(Dataset::open_ex(
+        &path,
+        DatasetOptions {
+            open_flags: GdalOpenFlags::GDAL_OF_UPDATE,
+            ..Default::default()
+        },
+    )
+    .with_context(|| format!("editing dataset {}", path.display()))?)
 }
 
 use gdal::raster::GdalType;
@@ -30,16 +38,11 @@ pub fn create_output_raster<T: GdalType>(
     num_bands: isize,
     no_val: Option<f64>,
 ) -> Result<Dataset> {
-    let out_ds = {
+    let mut out_ds = {
         let driver = Driver::get(&arg.driver)?;
         let (width, height) = ds.raster_size();
         driver
-            .create_with_band_type::<T>(
-                &arg.path.to_string_lossy(),
-                width as isize,
-                height as isize,
-                num_bands,
-            )
+            .create_with_band_type::<T, _>(&arg.path, width as isize, height as isize, num_bands)
             .with_context(|| format!("creating dataset {}", arg.path.display()))?
     };
     if let Some(no_val) = no_val {
@@ -71,12 +74,7 @@ mod test {
 
         // Create empty raster
         {
-            driver.create_with_band_type::<f64>(
-                &path.to_string_lossy(),
-                WIDTH as isize,
-                HEIGHT as isize,
-                1,
-            )?;
+            driver.create_with_band_type::<f64, _>(&path, WIDTH as isize, HEIGHT as isize, 1)?;
         }
 
         // Create random data
@@ -94,7 +92,7 @@ mod test {
         // Write some dataset
         {
             let ds = edit_dataset(&path)?;
-            let band = ds.rasterband(1)?;
+            let mut band = ds.rasterband(1)?;
             let (width, height) = ds.raster_size();
 
             assert_eq!(width, WIDTH);
