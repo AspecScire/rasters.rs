@@ -1,6 +1,6 @@
 [package]
 name = "rasters"
-version = "0.6.2"
+version = "0.7.0"
 authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>", "Madhav Manoj <madhav.manoj@aspecscire.com>"]
 edition = "2018"
 description = "Raster processing library"
