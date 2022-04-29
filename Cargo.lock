@@ -28,7 +28,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4f823d037a7ec6ea2197046bafd4ae150e6bc36f9ca347404f46a46823fa84f2"
 dependencies = [
  "approx 0.3.2",
- "num-complex",
+ "num-complex 0.2.4",
  "num-traits",
 ]
 
@@ -257,7 +257,23 @@ checksum = "499d861a8bae743b64552f4448860301c1ed6d919d93de247b237938f9742102"
 dependencies = [
  "bitflags",
  "chrono",
- "gdal-sys",
+ "gdal-sys 0.5.0",
+ "geo-types",
+ "libc",
+ "once_cell",
+ "semver",
+ "thiserror",
+]
+
+[[package]]
+name = "gdal"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0298f86d1a41cb625d887f4e932b40060fc7ab51e3052701234ba3326e11e1f"
+dependencies = [
+ "bitflags",
+ "chrono",
+ "gdal-sys 0.6.0",
  "geo-types",
  "libc",
  "once_cell",
@@ -270,6 +286,17 @@ name = "gdal-sys"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a3cbe455a1956d8bb388ff7cd7f57c23215dbee46198a0f35688fd1fd604ca1"
+dependencies = [
+ "libc",
+ "pkg-config",
+ "semver",
+]
+
+[[package]]
+name = "gdal-sys"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8331ad3efd6032c03f2462785468edceeb79371b43757ff29809f2d160575f0f"
 dependencies = [
  "libc",
  "pkg-config",
@@ -319,10 +346,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "geo-types"
-version = "0.7.2"
+name = "geo"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8bd2e95dd9f5c8ff74159ed9205ad7fd239a9569173a550863976421b45d2bb"
+checksum = "d7e2e3be15682a45e9dfe9a04f84bff275390047204ab22f3c6b2312fcfb9e24"
+dependencies = [
+ "geo-types",
+ "geographiclib-rs",
+ "log",
+ "num-traits",
+ "robust",
+ "rstar",
+]
+
+[[package]]
+name = "geo-types"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9537881a3d2941ff3fe901e744c45f0fa4c142334f499f27d26be1d72299ba8"
 dependencies = [
  "approx 0.4.0",
  "num-traits",
@@ -429,6 +470,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "matrixmultiply"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "add85d4dd35074e6fedc608f8c8f513a3548619a9024b751949ef0e8e45a4d84"
+dependencies = [
+ "rawpointer",
+]
+
+[[package]]
 name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -462,11 +512,26 @@ dependencies = [
  "alga",
  "approx 0.3.2",
  "generic-array 0.12.4",
- "matrixmultiply",
- "num-complex",
- "num-rational",
+ "matrixmultiply 0.2.4",
+ "num-complex 0.2.4",
+ "num-rational 0.2.4",
  "num-traits",
  "rand 0.6.5",
+ "typenum",
+]
+
+[[package]]
+name = "nalgebra"
+version = "0.26.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "476d1d59fe02fe54c86356e91650cd892f392782a1cb9fc524ec84f7aa9e1d06"
+dependencies = [
+ "approx 0.4.0",
+ "matrixmultiply 0.3.2",
+ "num-complex 0.3.1",
+ "num-rational 0.3.2",
+ "num-traits",
+ "simba",
  "typenum",
 ]
 
@@ -476,12 +541,25 @@ version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac06db03ec2f46ee0ecdca1a1c34a99c0d188a0d83439b84bf0cb4b386e4ab09"
 dependencies = [
- "matrixmultiply",
- "num-complex",
+ "matrixmultiply 0.2.4",
+ "num-complex 0.2.4",
  "num-integer",
  "num-traits",
  "rawpointer",
  "serde",
+]
+
+[[package]]
+name = "ndarray"
+version = "0.15.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dec23e6762830658d2b3d385a75aa212af2f67a4586d4442907144f3bb6a1ca8"
+dependencies = [
+ "matrixmultiply 0.3.2",
+ "num-complex 0.4.0",
+ "num-integer",
+ "num-traits",
+ "rawpointer",
 ]
 
 [[package]]
@@ -491,10 +569,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8536030f9fea7127f841b45bb6243b27255787fb4eb83958aa1ef9d2fdc0c36"
 dependencies = [
  "num-bigint",
- "num-complex",
+ "num-complex 0.2.4",
  "num-integer",
  "num-iter",
- "num-rational",
+ "num-rational 0.2.4",
  "num-traits",
 ]
 
@@ -516,6 +594,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6b19411a9719e753aff12e5187b74d60d3dc449ec3f4dc21e3989c3f554bc95"
 dependencies = [
  "autocfg 1.0.1",
+ "num-traits",
+]
+
+[[package]]
+name = "num-complex"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "747d632c0c558b87dbabbe6a82f3b4ae03720d0646ac5b7b4dae89394be5f2c5"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-complex"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26873667bbbb7c5182d4a37c1add32cdf09f841af72da53318fdb81543c15085"
+dependencies = [
  "num-traits",
 ]
 
@@ -553,6 +649,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-rational"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12ac428b1cb17fce6f731001d307d351ec70a6d202fc2e60f7d4c5e42d8f4f07"
+dependencies = [
+ "autocfg 1.0.1",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -583,6 +690,12 @@ name = "once_cell"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da32515d9f6e6e489d7bc9d84c71b060db7247dc035bbe44eac88cf87486d8d5"
+
+[[package]]
+name = "paste"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c520e05135d6e763148b6426a837e239041653ba7becd2e538c076c738025fc"
 
 [[package]]
 name = "pdqselect"
@@ -740,15 +853,15 @@ dependencies = [
  "Inflector",
  "anyhow",
  "clap",
- "gdal",
- "gdal-sys",
- "geo",
+ "gdal 0.11.0",
+ "gdal-sys 0.5.0",
+ "geo 0.18.0",
  "indicatif",
  "memmap",
- "nalgebra",
- "ndarray",
+ "nalgebra 0.18.1",
+ "ndarray 0.13.1",
  "rand 0.4.6",
- "rasters",
+ "rasters 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rayon",
  "serde",
  "serde_cbor",
@@ -763,10 +876,26 @@ name = "rasters"
 version = "0.7.0"
 dependencies = [
  "anyhow",
- "gdal",
- "geo",
- "nalgebra",
- "ndarray",
+ "gdal 0.12.0",
+ "geo 0.20.1",
+ "nalgebra 0.26.2",
+ "ndarray 0.15.4",
+ "rayon",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
+name = "rasters"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a53d066529aa79f6d8925afd4b048e66f2b6a53df295744e0d82274467381425"
+dependencies = [
+ "anyhow",
+ "gdal 0.11.0",
+ "geo 0.18.0",
+ "nalgebra 0.18.1",
+ "ndarray 0.13.1",
  "rayon",
  "serde",
  "serde_derive",
@@ -913,6 +1042,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "simba"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5132a955559188f3d13c9ba831e77c802ddc8782783f050ed0c52f5988b95f4c"
+dependencies = [
+ "approx 0.4.0",
+ "num-complex 0.3.1",
+ "num-traits",
+ "paste",
+]
+
+[[package]]
 name = "smallvec"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -926,7 +1067,7 @@ checksum = "e3dc1780b8854a0940003a328111d1da764cce7042a43334925ffaaa3b9debe0"
 dependencies = [
  "cgmath",
  "clamp",
- "nalgebra",
+ "nalgebra 0.18.1",
  "num",
  "pdqselect",
  "smallvec",
