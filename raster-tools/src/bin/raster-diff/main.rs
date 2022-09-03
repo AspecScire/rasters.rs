@@ -106,7 +106,7 @@ fn run() -> Result<()> {
 
                     diff_proc.process(
                         &mut |(i, j), val_1, val_2| {
-                            let mut diff = val_2 - val_1;
+                            let mut diff = val_2 - val_1 + args.adjust;
                             if args.negate {
                                 diff = -diff;
                             }

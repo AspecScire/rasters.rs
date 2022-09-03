@@ -19,10 +19,9 @@ pub fn transform_from_dataset(ds: &gdal::Dataset) -> PixelTransform {
         .map_or_else(|_| Matrix3::identity(), |t| transform_from_gdal(&t))
 }
 
-#[cfg(feature = "gdal")]
 /// Converts raw GDAL transform information `[f64; 6]` into
 /// a `PixelTransform`
-fn transform_from_gdal(t: &[f64]) -> PixelTransform {
+pub fn transform_from_gdal(t: &[f64]) -> PixelTransform {
     Matrix3::new(t[1], t[2], t[0], t[4], t[5], t[3], 0., 0., 1.)
 }
 
