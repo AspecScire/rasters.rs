@@ -1,6 +1,7 @@
 use anyhow::{anyhow, bail};
 use nalgebra::Point2;
 use raster_tools::{utils::*, *};
+use gdal::vector::LayerAccess;
 
 #[derive(Clone)]
 pub struct PointWithHeight {

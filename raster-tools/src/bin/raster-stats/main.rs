@@ -5,6 +5,7 @@ use clap::*;
 use anyhow::{anyhow, bail};
 use raster_tools::{utils::*, Result, Tracker, *};
 use rasters::prelude::*;
+use gdal::vector::LayerAccess;
 
 // Main function
 raster_tools::sync_main!(run());

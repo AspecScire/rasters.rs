@@ -26,7 +26,7 @@ fn run() -> Result<()> {
 
     // Create output dataset
     let out_ds = create_output_raster::<u8>(&args.output, &ds, 1, None)?;
-    out_ds.rasterband(1)?.set_no_data_value(0.0)?;
+    out_ds.rasterband(1)?.set_no_data_value(Some(0.0))?;
 
     // Configure chunking
     let chunks_cfg = ChunkConfig::for_dataset(&ds, Some(1..2))?.with_min_data_size(args.chunk_size);
