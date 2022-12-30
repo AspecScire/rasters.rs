@@ -15,18 +15,19 @@ license = "Apache-2.0/MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
+default = ["gdal"]
 # Verify package.metadata.docs.rs when updating
 use-rayon = ["rayon"]
 
 [dependencies]
 
 # Math and algo deps
-ndarray = "0.13.1"
-nalgebra = "0.18.1"
+ndarray = "0.15.4"
+nalgebra = "0.26.2"
 
 # GIS deps
-gdal = "0.14"
-geo = "0.18.0"
+gdal = { version = "0.14", optional = true }
+geo = "0.20.1"
 
 # Serialization
 serde = "1.0.133"

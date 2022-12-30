@@ -13,7 +13,7 @@ license = "Apache-2.0/MIT"
 bindgen = ["gdal/bindgen", "gdal-sys/bindgen"]
 
 [dependencies]
-rasters = { path = "..", version = "^0.7.0", features = ["use-rayon"] }
+rasters = { version = "^0.7.0", features = ["use-rayon"] }
 clap = "2.34.0"
 indicatif = "0.13.0"
 Inflector = "0.11.4"

@@ -1,6 +1,5 @@
 //! Geometry manipulation utilities
 
-use gdal::Dataset;
 use geo::Rect;
 use nalgebra::Matrix3;
 
@@ -10,18 +9,19 @@ use nalgebra::Matrix3;
 /// rotation. Represented by a 3x3 matrix.
 pub type PixelTransform = Matrix3<f64>;
 
+#[cfg(feature = "gdal")]
 /// Read the geo. transform from a `Dataset`, and convert it
 /// an affine translation `PixelTransform` matrix. Returns
 /// the identity transformation if no geo. transform is
 /// found.
-pub fn transform_from_dataset(ds: &Dataset) -> PixelTransform {
+pub fn transform_from_dataset(ds: &gdal::Dataset) -> PixelTransform {
     ds.geo_transform()
         .map_or_else(|_| Matrix3::identity(), |t| transform_from_gdal(&t))
 }
 
 /// Converts raw GDAL transform information `[f64; 6]` into
 /// a `PixelTransform`
-fn transform_from_gdal(t: &[f64]) -> PixelTransform {
+pub fn transform_from_gdal(t: &[f64]) -> PixelTransform {
     Matrix3::new(t[1], t[2], t[0], t[4], t[5], t[3], 0., 0., 1.)
 }
 
@@ -110,9 +110,11 @@ impl BoundsExt for Bounds {
     }
 }
 
+#[cfg(feature = "gdal")]
 #[cfg(test)]
 mod tests {
     use nalgebra::Point2;
+    use gdal::Dataset;
 
     use super::*;
     use std::path::Path;

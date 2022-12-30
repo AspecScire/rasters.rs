@@ -21,6 +21,8 @@ pub struct Args {
     pub output_type: OutputType,
     /// Chunk size to read input raster
     pub chunk_size: usize,
+    /// Adjust
+    pub adjust: f64,
 }
 
 pub enum OutputType {
@@ -88,6 +90,11 @@ pub fn parse_cmd_line() -> Args {
             opt!("chunk size")
                 .short("c")
                 .help("Read chunk size (default: 64k pixels)"),
+        )
+        .arg(
+            opt!("adjust")
+                .allow_hyphen_values(true)
+                .help("Adjust difference by value (float)"),
         )
         .get_matches();
 
@@ -165,6 +172,7 @@ pub fn parse_cmd_line() -> Args {
             _ => Error::with_description("WKT is not a (multi)-polygon", InvalidValue).exit(),
         }
     });
+    let adjust = value_t!(matches, "adjust", f64).unwrap_or_default();
 
     Args {
         input_a,
@@ -175,5 +183,6 @@ pub fn parse_cmd_line() -> Args {
         chunk_size,
         output,
         output_type,
+        adjust,
     }
 }

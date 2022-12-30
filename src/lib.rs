@@ -12,6 +12,7 @@ pub mod histogram;
 pub mod stats;
 
 pub mod chunking;
+#[cfg(feature = "gdal")]
 pub mod reader;
 
 pub mod align;
