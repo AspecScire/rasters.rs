@@ -1,6 +1,6 @@
 [package]
 name = "raster-tools"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>", "Madhav Manoj <madhav.manoj@aspecscire.com>"]
 edition = "2018"
 repository = "https://github.com/AspecScire/rasters.rs"
