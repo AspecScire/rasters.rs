@@ -9,6 +9,9 @@ license = "Apache-2.0/MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+bindgen = ["gdal/bindgen", "gdal-sys/bindgen"]
+
 [dependencies]
 rasters = { path = "..", version = "^0.7.0", features = ["use-rayon"] }
 clap = "2.34.0"
