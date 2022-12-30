@@ -13,7 +13,7 @@ license = "Apache-2.0/MIT"
 bindgen = ["gdal/bindgen", "gdal-sys/bindgen"]
 
 [dependencies]
-rasters = { version = "^0.7.0", features = ["use-rayon"] }
+rasters = { path="..", version = "^0.8.0", features = ["use-rayon"] }
 clap = "2.34.0"
 indicatif = "0.13.0"
 Inflector = "0.11.4"
@@ -23,13 +23,13 @@ spade = "1.8.2"
 
 memmap = "0.7.0"
 
-nalgebra = "0.18.1"
-ndarray = { version = "0.13.1", features = ["serde-1"] }
+nalgebra = "0.31.4"
+ndarray = { version = "0.15.4", features = ["serde-1"] }
 
 # GIS deps
 gdal = "0.14"
 gdal-sys = "0.8"
-geo = "0.18.0"
+geo = "0.23.1"
 
 # Serialization
 serde = "1.0.133"

@@ -78,7 +78,7 @@ impl Diff {
         // by subtracting off_1 + 0.5
         let extent = self.extent.as_ref().map(|poly| {
             use geo::algorithm::map_coords::MapCoords;
-            poly.map_coords(|&(x, y)| (x - off_1.x, y - off_1.y))
+            poly.map_coords(|coord| (coord.x - off_1.x, coord.y - off_1.y).into())
         });
 
         let (rows, cols) = arr_1.dim();

@@ -1,6 +1,6 @@
 [package]
 name = "rasters"
-version = "0.7.1"
+version = "0.8.0"
 authors = ["Rajsekar Manokaran <rajsekar.manokaran@aspecscire.com>", "Madhav Manoj <madhav.manoj@aspecscire.com>"]
 edition = "2018"
 description = "Raster processing library"
@@ -23,11 +23,11 @@ use-rayon = ["rayon"]
 
 # Math and algo deps
 ndarray = "0.15.4"
-nalgebra = "0.26.2"
+nalgebra = "0.31.4"
 
 # GIS deps
 gdal = { version = "0.14", optional = true }
-geo = "0.20.1"
+geo = "0.23.1"
 
 # Serialization
 serde = "1.0.133"

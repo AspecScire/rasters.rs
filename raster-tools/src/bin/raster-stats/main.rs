@@ -23,7 +23,7 @@ fn run() -> Result<()> {
     use nalgebra::*;
 
     // Project polygons on raster pixels
-    let polygons: Vec<_> = {
+    let polygons: Vec<Option<MultiPolygon>> = {
         let inv = transform
             .try_inverse()
             .ok_or_else(|| anyhow!("input: couldn't invert geo transform"))?;
@@ -32,9 +32,10 @@ fn run() -> Result<()> {
             .map(|poly| {
                 use geo::algorithm::map_coords::MapCoords;
                 poly.as_ref().map(|poly| {
-                    poly.map_coords(|&(x, y)| {
-                        let pt = inv.transform_point(&Point2::new(x, y));
-                        (pt.x, pt.y)
+                    poly.map_coords(|coord| {
+                        let pt = inv.transform_point(&Point2::from_slice(&[coord.x, coord.y]));
+                        let p: Coord = (pt.x, pt.y).into();
+                        p
                     })
                 })
             })
@@ -99,6 +100,8 @@ use std::{
     convert::TryInto,
     path::{Path, PathBuf},
 };
+use geo::{Coord, MultiPolygon};
+
 /// Program arguments
 pub struct Args {
     /// First input
