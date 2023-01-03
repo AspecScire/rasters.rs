@@ -1,28 +1,27 @@
 use anyhow::{anyhow, bail};
-use nalgebra::Point2;
 use raster_tools::{utils::*, *};
 use gdal::vector::LayerAccess;
 
 #[derive(Clone)]
 pub struct PointWithHeight {
-    pub point: Point2<f64>,
-    pub gradient: Point2<f64>,
+    pub point: [f64; 2],
+    pub gradient: [f64; 2],
     pub height: f64,
 }
 
 impl PointWithHeight {
     pub fn new(x: f64, y: f64, height: f64) -> Self {
         PointWithHeight {
-            point: Point2::new(x, y),
+            point: [x, y],
             height,
-            gradient: Point2::new(0., 0.),
+            gradient: [0., 0.],
         }
     }
 }
 
 impl HasPosition for PointWithHeight {
-    type Point = Point2<f64>;
-    fn position(&self) -> Point2<f64> {
+    type Point = [f64; 2];
+    fn position(&self) -> [f64; 2] {
         self.point
     }
 }
@@ -49,7 +48,7 @@ pub fn get_triangles(args: &super::Args) -> Result<Triangles> {
 }
 
 pub type Triangulation =
-    FloatDelaunayTriangulation<PointWithHeight, DelaunayTreeLocate<Point2<f64>>>;
+    FloatDelaunayTriangulation<PointWithHeight, DelaunayTreeLocate<[f64; 2]>>;
 pub fn get_triangulation<I: IntoIterator<Item = PointWithHeight>>(pts: I) -> Triangulation {
     let mut tr = FloatDelaunayTriangulation::with_tree_locate();
     for p in pts {
