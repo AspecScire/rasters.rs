@@ -1,7 +1,3 @@
-use crate::Result;
-use anyhow::Context;
-use gdal::Dataset;
-
 use super::{mod_ceil, ChunkConfig};
 
 /// Constructors
@@ -24,13 +20,15 @@ impl ChunkConfig {
         }
     }
 
+    #[cfg(feature = "gdal")]
     /// Construct a `ChunkConfig` from a raster [`Dataset`],
     /// reading the size from it. An optional list of bands
     /// may be specified to configure the `block_size`.
     pub fn for_dataset<I: IntoIterator<Item = isize>>(
-        ds: &Dataset,
+        ds: &gdal::Dataset,
         bands: Option<I>,
-    ) -> Result<Self> {
+    ) -> crate::Result<Self> {
+        use anyhow::Context;
         let size = ds.raster_size();
         let mut cfg = ChunkConfig::with_dims(size.0, size.1);
 

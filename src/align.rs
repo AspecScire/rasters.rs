@@ -11,12 +11,12 @@
 //! - Extend the above functionality efficiently to work
 //! with chunks of `A`.
 
-use anyhow::*;
-use gdal::Dataset;
 use geo::Rect;
 use nalgebra::{Point2, Vector2, Vector3};
 
-use crate::prelude::{transform_from_dataset, BoundsExt, PixelTransform, RasterDims, RasterWindow};
+use crate::prelude::{BoundsExt, PixelTransform, RasterDims, RasterWindow};
+#[cfg(feature = "gdal")]
+use crate::prelude::transform_from_dataset;
 
 /// Transforms a `RasterWindow` from one raster to another,
 /// possibly truncating to ensure the output is valid for
@@ -43,9 +43,11 @@ pub fn transform_window(win: RasterWindow, t: PixelTransform, dim: RasterDims) -
     Rect::new((t_lt.x, t_lt.y), (t_rb.x, t_rb.y)).window_from_bounds(dim)
 }
 
+#[cfg(feature = "gdal")]
 /// Compute affine transform to transfer from pixel
 /// coordinates of the first dataset to the second dataset.
-pub fn transform_between(ds_1: &Dataset, ds_2: &Dataset) -> Result<PixelTransform> {
+pub fn transform_between(ds_1: &gdal::Dataset, ds_2: &gdal::Dataset) -> anyhow::Result<PixelTransform> {
+    use anyhow::*;
     let transform_1 = transform_from_dataset(&ds_1);
     let transform_2 = transform_from_dataset(&ds_2);
 
@@ -141,10 +143,12 @@ pub fn index_transformer(
     }
 }
 
+#[cfg(feature = "gdal")]
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::path::Path;
+    use gdal::Dataset;
 
     fn print_mat3x3(t: &PixelTransform) {
         for i in 0..3 {

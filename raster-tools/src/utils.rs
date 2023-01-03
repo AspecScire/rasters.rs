@@ -1,6 +1,6 @@
 //! Utilities to create, read and write raster datasets.
 
-use gdal::DatasetOptions;
+use gdal::{DatasetOptions, DriverManager};
 use gdal::GdalOpenFlags;
 use rasters::Result;
 use std::fs::File;
@@ -14,7 +14,7 @@ pub struct OutputArgs {
 }
 
 use anyhow::Context;
-use gdal::{Dataset, Driver};
+use gdal::Dataset;
 
 pub fn read_dataset(path: &Path) -> Result<Dataset> {
     Ok(Dataset::open(&path).with_context(|| format!("reading dataset {}", path.display()))?)
@@ -39,7 +39,7 @@ pub fn create_output_raster<T: GdalType>(
     no_val: Option<f64>,
 ) -> Result<Dataset> {
     let mut out_ds = {
-        let driver = Driver::get(&arg.driver)?;
+        let driver = DriverManager::get_driver_by_name(&arg.driver)?;
         let (width, height) = ds.raster_size();
         driver
             .create_with_band_type::<T, _>(&arg.path, width as isize, height as isize, num_bands)
@@ -47,7 +47,7 @@ pub fn create_output_raster<T: GdalType>(
     };
     if let Some(no_val) = no_val {
         for i in 1..=num_bands {
-            out_ds.rasterband(i)?.set_no_data_value(no_val)?;
+            out_ds.rasterband(i)?.set_no_data_value(Some(no_val))?;
         }
     }
     if let Ok(gt) = ds.geo_transform() {
@@ -68,7 +68,7 @@ mod test {
 
     #[test]
     fn create_read_update_ds() -> Result<()> {
-        let driver = Driver::get("GTIFF")?;
+        let driver = DriverManager::get_driver_by_name("GTIFF")?;
         let tmp_dir = TempDir::new("rasters_test").unwrap();
         let path = tmp_dir.path().join("foo.tif");
 

@@ -38,9 +38,9 @@ fn run() -> Result<()> {
             .ok_or_else(|| anyhow!("input_a: couldn't invert transform"))?;
         args.polygon.as_ref().map(|poly| {
             use geo::algorithm::map_coords::MapCoords;
-            poly.map_coords(|&(x, y)| {
-                let pt = inv.transform_point(&Point2::new(x, y));
-                (pt.x, pt.y)
+            poly.map_coords(|coord| {
+                let pt = inv.transform_point(&Point2::from_slice(&[coord.x, coord.y]));
+                (pt.x, pt.y).into()
             })
         })
     };
@@ -106,7 +106,7 @@ fn run() -> Result<()> {
 
                     diff_proc.process(
                         &mut |(i, j), val_1, val_2| {
-                            let mut diff = val_2 - val_1;
+                            let mut diff = val_2 - val_1 + args.adjust;
                             if args.negate {
                                 diff = -diff;
                             }

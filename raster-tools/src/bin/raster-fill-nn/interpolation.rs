@@ -25,7 +25,7 @@ pub fn fill_chunk(
                 };
                 // NN c1 sibson
                 let val = triangulation
-                    .nn_interpolation_c1_sibson(&pt, sibson, |v| v.height, |_, v| v.gradient)
+                    .nn_interpolation_c1_sibson(&[pt.x, pt.y], sibson, |v| v.height, |_, v| v.gradient)
                     .unwrap();
 
                 // Farin: slow
