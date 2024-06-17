@@ -38,7 +38,7 @@ anyhow = "1.0.86"
 
 # Optional Dependencies
 rayon = { version = "1.10.0", optional = true }
-gdal-sys = { version = "0.9.1", features = ["bindgen"] }
+gdal-sys = { version = "0.9.1", features = ["bindgen"], optional=true }
 
 [workspace]
 members = [
