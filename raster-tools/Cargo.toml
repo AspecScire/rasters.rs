@@ -18,13 +18,13 @@ clap = "2.34.0"
 indicatif = "0.13.0"
 Inflector = "0.11.4"
 
-rayon = "1.5.1"
+rayon = "1.10.0"
 spade = "1.8.2"
 
 memmap = "0.7.0"
 
 nalgebra = "0.31.4"
-ndarray = { version = "0.15.4", features = ["serde-1"] }
+ndarray = { version = "0.15.6", features = ["serde-1"] }
 
 # GIS deps
 gdal = "0.14"
@@ -32,13 +32,13 @@ gdal-sys = "0.8"
 geo = "0.23.1"
 
 # Serialization
-serde = "1.0.133"
-serde_derive = "1.0.133"
+serde = "1.0.203"
+serde_derive = "1.0.203"
 serde_cbor = "0.11.2"
-serde_json = "1.0.74"
+serde_json = "1.0.117"
 
 # Error handling
-anyhow = "1.0.52"
+anyhow = "1.0.86"
 
 [dev-dependencies]
 tempdir = "0.3.7"
